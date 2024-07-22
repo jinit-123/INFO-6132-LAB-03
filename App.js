@@ -1,20 +1,74 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/Ionicons';
+import TransactionListScreen from './screens/TransactionListScreen';
+import TransactionDetailScreen from './screens/TransactionDetailScreen';
+import SummaryScreen from './screens/SummaryScreen';
 
-export default function App() {
+const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
+
+function TransactionsStack() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Stack.Navigator>
+      <Stack.Screen 
+        name="TransactionList" 
+        component={TransactionListScreen}
+        options={{ title: 'Transactions List' }}
+      />
+      <Stack.Screen 
+        name="TransactionDetail" 
+        component={TransactionDetailScreen}
+        options={{ title: 'Transaction Detail' }}
+      />
+    </Stack.Navigator>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+function SummaryStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen 
+        name="Summary" 
+        component={SummaryScreen}
+        options={{ title: 'Summary' }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          headerShown: false,
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+
+            if (route.name === 'Transactions') {
+              iconName = focused ? 'list' : 'list-outline';
+            } else if (route.name === 'Summary') {
+              iconName = focused ? 'stats-chart' : 'stats-chart-outline';
+            }
+
+            return <Icon name={iconName} size={size} color={color} />;
+          },
+          tabBarActiveTintColor: 'tomato',
+          tabBarInactiveTintColor: 'gray',
+        })}
+      >
+        <Tab.Screen 
+          name="Transactions" 
+          component={TransactionsStack}
+        />
+        <Tab.Screen 
+          name="Summary" 
+          component={SummaryStack}
+        />
+      </Tab.Navigator>
+    </NavigationContainer>
+  );
+}
